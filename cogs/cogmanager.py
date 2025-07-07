@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
-import os 
+import os
+from dotenv import load_dotenv
 
 ownerid = os.getenv("ownerid")
 
@@ -10,8 +11,8 @@ class CogManager(commands.Cog):
 
     @commands.command()
     async def load(self, ctx, cog_name: str = None):
-        if ctx.author.id != ownerid:
-            await ctx.send("You do not have permission to use this command.")
+        if str(ctx.author.id) != str(ownerid):
+            await ctx.send("You do not have permission to use this command.\nOwner's ID: " + ownerid + "\nYour ID: " + str(ctx.author.id) )
             return
         if cog_name is None:
             await ctx.send("Please provide the cog name to load.")
@@ -24,7 +25,7 @@ class CogManager(commands.Cog):
 
     @commands.command()
     async def unload(self, ctx, cog_name: str = None):
-        if ctx.author.id != ownerid:
+        if str(ctx.author.id) != str(ownerid):
             await ctx.send("You do not have permission to use this command.")
             return
         if cog_name is None:
@@ -38,7 +39,7 @@ class CogManager(commands.Cog):
 
     @commands.command()
     async def reload(self, ctx, cog_name: str = None):
-        if ctx.author.id != ownerid:
+        if str(ctx.author.id) != str(ownerid): #ownerid:
             await ctx.send("You do not have permission to use this command.")
             return
         if cog_name is None:
@@ -59,7 +60,7 @@ class CogManager(commands.Cog):
             await ctx.send("No cogs are currently loaded.")
             return
 
-        embed = discord.Embed(title="Loaded Cogs", description="Here is a list of all currently loaded cogs:")
+        embed = discord.Embed(title="Loaded Cogs", description="Here is a list of all currently loaded cogs:", color=0x7B79FF)
         embed.add_field(name="Cogs", value="\n".join(cogs), inline=False)
         await ctx.send(embed=embed)
 
