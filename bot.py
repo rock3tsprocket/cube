@@ -399,7 +399,7 @@ async def help(ctx, *args):
 
         command_categories = {
             "General": ["mem", "talk", "ask", "ping", "echo"],
-            "Administration": ["stats", "shell"]
+            "Administration": ["stats"]
         }
 
         for category, commands_list in command_categories.items():
@@ -512,6 +512,19 @@ async def echo(ctx, *args):
     else:
         await ctx.send(arguments)
 
+# backported about command
+@bot.command()
+async def about(ctx):
+    print("-----------------------------------\n\n")
+    latest_version: str = check_for_update()
+    print("-----------------------------------")
+    embed: discord.Embed = discord.Embed(title=f"About me", description="", color=0x7B79FF)
+    embed.add_field(name=f"Name", value=f"{NAME}", inline=False)
+    embed.add_field(name=f"Version", value=f"Local: {local_version}\n Latest: {latest_version}", inline=False)
+
+    await send_message(ctx, embed=embed)
+
+
 @bot.command()
 async def stats(ctx):
     if ctx.author.id != ownerid : 
@@ -553,15 +566,6 @@ async def shell(ctx):
     if ctx.author.id != ownerid : 
         return
     os.system("bash")
-
-#@bot.command()
-#async def test(self, ctx, *word):
-#      args = ' '.join(word)
-#      if profanity.contains_profanity(args):
-#          await ctx.send("You cannot echo a message containing profanity!")
-#          return
-#      else:
-#          await ctx.send(args)
 
 @tasks.loop(minutes=60)
 async def post_message():
