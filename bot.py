@@ -39,6 +39,7 @@ DEFAULT_DATASET_FILE = "defaultdataset.json"
 MEMORY_LOADED_FILE = "MEMORY_LOADED"
 gooberTOKEN = os.getenv("gooberTOKEN")  
 ALIVEPING = os.getenv("ALIVEPING")
+RANDOMTALK = os.getenv("RANDOMTALK")
 
 print(splashtext) # you can use https://patorjk.com/software/taag/ for 3d text or just remove this entirely
 
@@ -487,24 +488,25 @@ async def on_message(message):
     random_chance = random.randint(0, 20)
 
     # talk randomly only in the specified channels
-    if message.channel.id in random_talk_channels and random_chance >= 10:
-        current_time = time.time()
-        print(f"Random chance: {random_chance}, Time passed: {current_time - last_random_talk_time}")
+    if RANDOMTALK == "True":
+        if message.channel.id in random_talk_channels and random_chance >= 10:
+            current_time = time.time()
+            print(f"Random chance: {random_chance}, Time passed: {current_time - last_random_talk_time}")
 
-        if current_time - last_random_talk_time >= cooldown_time:
-            print("Bot is talking randomly!")
-            last_random_talk_time = current_time
+            if current_time - last_random_talk_time >= cooldown_time:
+                print("Bot is talking randomly!")
+                last_random_talk_time = current_time
 
-            response = None
-            for _ in range(10): 
-                response = markov_model.make_sentence(tries=100)
-                if response and response not in generated_sentences:
-                    response = improve_sentence_coherence(response)
-                    generated_sentences.add(response)
-                    break
+                response = None
+                for _ in range(10): 
+                    response = markov_model.make_sentence(tries=100)
+                    if response and response not in generated_sentences:
+                        response = improve_sentence_coherence(response)
+                        generated_sentences.add(response)
+                        break
 
-            if response:
-                await message.channel.send(response)
+                if response:
+                    await message.channel.send(response)
 
     # process any commands in the message
     await bot.process_commands(message)
