@@ -233,7 +233,7 @@ async def on_ready():
     print(f"Logged in as {bot.user}")
     # the following code has been taken from Titanium (https://github.com/RestartB/titanium)
     for filename in glob(
-        os.path.join("cogs", "**"), recursive=False, include_hidden=False
+        os.path.join("cogs", "**"), recursive=True, include_hidden=False
     ):
         if not os.path.isdir(filename):
             # Determine if file is a python file
@@ -545,7 +545,7 @@ async def about(ctx):
     print("-----------------------------------")
     embed: discord.Embed = discord.Embed(title=f"About me", description="", color=0x7B79FF)
     embed.add_field(name=f"Name", value=f"{NAME}", inline=False)
-    embed.add_field(name=f"Version", value=f"Local: {local_version}\n Latest: {latest_version}", inline=False)
+    embed.add_field(name=f"Version", value=f"Local: {local_version}\n Latest: {latest_version}\nSource Code: https://github.com/rock3tsprocket/cube\n License: GNU AGPL-3.0", inline=False)
 
     await send_message(ctx, embed=embed)
 
