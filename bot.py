@@ -559,7 +559,7 @@ async def stats(ctx):
     with open(memory_file, 'r') as file:
         line_count = sum(1 for _ in file)
     
-    embed = discord.Embed(title="Bot Stats", description="Data about the the bot's memory.", color=EMBED_COLOR)
+    embed = discord.Embed(title="Bot Stats", description="Data about the the bot's memory.", color=0x7B79FF)
     embed.add_field(name="File Stats", value=f"Size: {file_size} bytes\nLines: {line_count}", inline=False)
     embed.add_field(name="Version", value=f"Local: {local_version} \nLatest: {latest_version}", inline=False)
     embed.add_field(name="Variable Info", value=f"Prefix: {PREFIX} \nOwner ID: {ownerid} \nCooldown: {cooldown_time} \nPing line: {PING_LINE}", inline=False)
