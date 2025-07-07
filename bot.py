@@ -10,6 +10,7 @@ import re
 import os
 import requests
 from dotenv import load_dotenv
+from glob import glob
 
 # Load the .env file
 load_dotenv()
@@ -229,6 +230,19 @@ used_words = set()
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user}")
+    # the following code has been taken from Titanium (https://github.com/RestartB/titanium)
+    for filename in glob(
+        os.path.join("cogs", "**"), recursive=False, include_hidden=False
+    ):
+        if not os.path.isdir(filename):
+            # Determine if file is a python file
+            if filename.endswith(".py") and not filename.startswith("."):
+                filename = filename.replace("\\", "/").replace("/", ".")[:-3]
+
+                print(f"[INIT] Loading normal cog: {filename}...")
+                await bot.load_extension(filename)
+                print(f"[INIT] Loaded normal cog: {filename}")
+    # the rest of this is either written by me or from goober
     ping_server()
     post_message.start()
 
@@ -384,7 +398,7 @@ async def help(ctx, *args):
             embed = discord.Embed(
                 title=f"Help: {PREFIX}{command_name}",
                 description=f"**Description:** {command.help}",
-                color=discord.Color.blue()
+                color=0x7B79FF
             )
             await ctx.send(embed=embed)
         else:
@@ -394,13 +408,22 @@ async def help(ctx, *args):
         embed = discord.Embed(
             title="Bot Help",
             description="List of commands grouped by category.",
-            color=discord.Color.blue()
+            color=0x7B79FF
         )
 
         command_categories = {
             "General": ["mem", "talk", "ask", "ping", "echo"],
             "Administration": ["stats"]
         }
+        custom_commands: List[str] = []
+        for cog_name, cog in bot.cogs.items():
+            for command in cog.get_commands():
+                if command.name not in command_categories["General"] and command.name not in command_categories["Administration"]:
+                    custom_commands.append(command.name)
+
+        if custom_commands:
+            embed.add_field(name="Custom Commands", value="\n".join([f"{PREFIX}{command}" for command in custom_commands]), inline=False)
+        #    embed.set_footer(text="This bot has Super Cube Powers.")
 
         for category, commands_list in command_categories.items():
             commands_in_category = "\n".join([f"{PREFIX}{command}" for command in commands_list])
@@ -498,7 +521,7 @@ async def ping(ctx):
             f"{PING_LINE}\n"
             f"`Bot Latency: {latency}ms`\n"
         ),
-        color=discord.Color.blue()
+        color=0x7B79FF
     )
     LOLembed.set_footer(text=f"Requested by {ctx.author.name}", icon_url=ctx.author.avatar.url)
 
@@ -536,7 +559,7 @@ async def stats(ctx):
     with open(memory_file, 'r') as file:
         line_count = sum(1 for _ in file)
     
-    embed = discord.Embed(title="Bot Stats", description="Data about the the bot's memory.", color=discord.Color.blue())
+    embed = discord.Embed(title="Bot Stats", description="Data about the the bot's memory.", color=EMBED_COLOR)
     embed.add_field(name="File Stats", value=f"Size: {file_size} bytes\nLines: {line_count}", inline=False)
     embed.add_field(name="Version", value=f"Local: {local_version} \nLatest: {latest_version}", inline=False)
     embed.add_field(name="Variable Info", value=f"Prefix: {PREFIX} \nOwner ID: {ownerid} \nCooldown: {cooldown_time} \nPing line: {PING_LINE}", inline=False)
@@ -553,7 +576,7 @@ async def mem(ctx):
         with open(MEMORY_FILE, "r") as f:
             await ctx.send(" ", file=discord.File(f, MEMORY_FILE))
     else:
-        embed = discord.Embed(title="Memory Contents", description="The bot's memory.", color=discord.Color.blue())
+        embed = discord.Embed(title="Memory Contents", description="The bot's memory.", color=0x7B79FF)
         embed.add_field(name="Memory Data", value=f"```json\n{memory_text}\n```", inline=False)
         await ctx.send(embed=embed)
 

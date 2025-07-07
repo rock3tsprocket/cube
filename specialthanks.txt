@@ -1,0 +1,3 @@
+RestartB's Titanium Discord bot for cog loading code
+rock3tsprocket (me) for maintaining (or at least trying to maintain) goober 0.10.4.5.3
+whatdidyouexpect for creating goober and cog manager
