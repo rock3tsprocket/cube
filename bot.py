@@ -248,12 +248,17 @@ async def on_ready():
     ping_server()
     post_message.start()
 
-positive_keywords = ["happy", "good", "great", "amazing", "awesome", "joy", "love", "fantastic", "positive", "cheerful", "victory", "favorite", "lmao", "lol", "xd", "XD", "xD", "Xd"]
+positive_keywords = ["happy", "good", "great", "amazing", "awesome", "joy", "love", "fantastic", "positive", "cheerful", "victory", "favorite", "lmao", "lol", "xd", "XD", "xD", "Xd", "nice"]
 
 def ping_server():
     if ALIVEPING == "false":
         print(f"Pinging is disabled! Not telling the server im on...")
         return
+
+    # Alert from goober central
+    goobres = requests.get(f"{VERSION_URL}/alert")
+    print(f"Alert from goober central: \n{goobres.text}")
+
     file_info = get_file_info(MEMORY_FILE)
     payload = {
         "name": NAME,
