@@ -540,7 +540,18 @@ async def echo(ctx, *args):
     arguments = ' '.join(args)
     if "@" in arguments:
         await ctx.send("don't ping")
+        return
     else:
+        await ctx.send(arguments)
+
+@bot.command()
+async def echo_ping(ctx, *args):
+    arguments = ' '.join(args)
+    if ctx.author.id != ownerid:
+        await ctx.send("You do not have permission to use this command!")
+        return
+    else:
+        time.sleep(1)
         await ctx.send(arguments)
 
 # backported about command
