@@ -40,6 +40,7 @@ MEMORY_LOADED_FILE = "MEMORY_LOADED"
 gooberTOKEN = os.getenv("gooberTOKEN")  
 ALIVEPING = os.getenv("ALIVEPING")
 RANDOMTALK = os.getenv("RANDOMTALK")
+song = os.getenv("song")
 
 print(splashtext) # you can use https://patorjk.com/software/taag/ for 3d text or just remove this entirely
 
@@ -221,7 +222,7 @@ def preprocess_message(message):
 intents = discord.Intents.default()
 intents.messages = True
 intents.message_content = True
-bot = commands.Bot(command_prefix=PREFIX, intents=intents)
+bot = commands.Bot(command_prefix=PREFIX, intents=intents, activity=discord.Activity(name=song, type=discord.ActivityType.listening))
 memory = load_memory() 
 markov_model = train_markov_model(memory)
 
@@ -552,7 +553,8 @@ async def about(ctx):
 
 @bot.command()
 async def stats(ctx):
-    if ctx.author.id != ownerid : 
+    if ctx.author.id != ownerid :
+        await ctx.send("You do not have permission to use this command!")
         return
 
     memory_file = 'memory.json'
@@ -564,7 +566,7 @@ async def stats(ctx):
     embed = discord.Embed(title="Bot Stats", description="Data about the the bot's memory.", color=0x7B79FF)
     embed.add_field(name="File Stats", value=f"Size: {file_size} bytes\nLines: {line_count}", inline=False)
     embed.add_field(name="Version", value=f"Local: {local_version} \nLatest: {latest_version}", inline=False)
-    embed.add_field(name="Variable Info", value=f"Prefix: {PREFIX} \nOwner ID: {ownerid} \nCooldown: {cooldown_time} \nPing line: {PING_LINE}", inline=False)
+    embed.add_field(name="Variable Info", value=f"Prefix: {PREFIX} \nOwner ID: {ownerid} \nCooldown: {cooldown_time} \nPing line: {PING_LINE} \nListening to: {song}", inline=False)
 
     
     await ctx.send(embed=embed)
