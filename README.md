@@ -2,7 +2,7 @@ this bot is a modernized(?) version of goober 0.10.4.5.3
 
 Discord bot that learns from what people say!
 
-Please see the [wiki](https://wiki.goober.whatdidyouexpect.eu)
+Please see the [wiki](https://github.com/rock3tsprocket/cube/wiki)
 
 Keep in mind that most of the bot was written at 2am
 
