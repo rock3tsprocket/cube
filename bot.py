@@ -551,7 +551,6 @@ async def echo_ping(ctx, *args):
         await ctx.send("You do not have permission to use this command!")
         return
     else:
-        time.sleep(1)
         await ctx.send(arguments)
 
 # backported about command
@@ -609,6 +608,17 @@ async def shell(ctx):
     if ctx.author.id != ownerid : 
         return
     os.system("bash")
+
+@bot.command()
+async def changestatus(ctx, *args):
+    global song
+    if ctx.author.id != ownerid:
+        await ctx.send("You do not have permission to use this command!")
+        return
+    arguments = ' '.join(args)
+    await bot.change_presence(status=discord.Status.online, activity=discord.Activity(name=arguments, type=discord.ActivityType.listening))
+    await ctx.send(f"Now listening to: {arguments}")
+    song = arguments
 
 @tasks.loop(minutes=60)
 async def post_message():
