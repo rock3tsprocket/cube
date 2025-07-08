@@ -12,7 +12,7 @@ class CogManager(commands.Cog):
     @commands.command()
     async def load(self, ctx, cog_name: str = None):
         if str(ctx.author.id) != str(ownerid):
-            await ctx.send("You do not have permission to use this command.\nOwner's ID: " + ownerid + "\nYour ID: " + str(ctx.author.id) )
+            await ctx.send("You do not have permission to use this command.")
             return
         if cog_name is None:
             await ctx.send("Please provide the cog name to load.")
