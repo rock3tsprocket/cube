@@ -16,7 +16,7 @@ from glob import glob
 load_dotenv()
 
 VERSION_URL = "https://goober.whatdidyouexpect.eu"
-UPDATE_URL = VERSION_URL+"/latest_version.json"
+UPDATE_URL = "https://raw.githubusercontent.com/rock3tsprocket/cube/refs/heads/main/current_version.json"
 print(UPDATE_URL)
 LOCAL_VERSION_FILE = "current_version.json" 
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
@@ -47,13 +47,9 @@ print(splashtext) # you can use https://patorjk.com/software/taag/ for 3d text o
 def get_latest_version_info():
     """Fetch the latest version information from the server."""
     try:
-
         response = requests.get(UPDATE_URL, timeout=5)
-        if response.status_code == 200:
-            return response.json()
-        else:
-            print(f"Error: Unable to fetch version info. Status code {response.status_code}")
-            return None
+        response.raise_for_status()  # Will raise HTTPError for bad responses
+        return response.json()
     except requests.RequestException as e:
         print(f"Error: Unable to connect to the update server. {e}")
         return None
@@ -77,7 +73,7 @@ def check_for_update():
         return None, None 
 
     latest_version = latest_version_info.get("version")
-    download_url = latest_version_info.get("download_url")
+    download_url = "https://raw.githubusercontent.com/rock3tsprocket/cube/refs/heads/main/bot.py"
 
     if not latest_version or not download_url:
         print("Error: Invalid version information received from server.")
@@ -243,8 +239,10 @@ def ping_server():
 
     # Alert from goober central
     goobres = requests.get(f"{VERSION_URL}/alert")
-    print(f"Alert from goober central: \n{goobres.text}")
-
+    if goobres.status_code == 200:
+        print(f"Alert from goober central: \n{goobres.text}")
+    else:
+        print(f"Alert from cube: \nGoober Central is down: {goobres.status_code}")
     file_info = get_file_info(MEMORY_FILE)
     payload = {
         "name": NAME,
