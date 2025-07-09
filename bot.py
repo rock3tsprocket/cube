@@ -18,7 +18,7 @@ load_dotenv()
 VERSION_URL = "https://goober.whatdidyouexpect.eu"
 UPDATE_URL = VERSION_URL+"/latest_version.json"
 print(UPDATE_URL)
-LOCAL_VERSION_FILE = "current_version.txt" 
+LOCAL_VERSION_FILE = "current_version.json" 
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 PREFIX = os.getenv("BOT_PREFIX")
 PING_LINE = os.getenv("PING_LINE")
@@ -62,7 +62,7 @@ def get_local_version():
     """Read the current version from the local file."""
     if os.path.exists(LOCAL_VERSION_FILE):
         with open(LOCAL_VERSION_FILE, "r") as f:
-            return f.read().strip()
+            return json.loads(f.read().strip())["version"]
     return "0.0.0"
 
 latest_version = "0.0.0"
@@ -86,27 +86,13 @@ def check_for_update():
     local_version = get_local_version() 
     if local_version != latest_version:
         print(f"New version available: {latest_version} (Current: {local_version})")
-        print(f"Check {VERSION_URL}/goob/changes.txt to check out the changelog for version {latest_version}\n\n")
+        print(f"Check out the commit messages for cube (https://github.com/rock3tsprocket/cube)!\n\n")
     else:
         print(f"You're using the latest version: {local_version}")
-        print(f"Check {VERSION_URL}/goob/changes.txt to check out the changelog for version {latest_version}\n\n")
+        print(f"Check out the commit messages for cube (https://github.com/rock3tsprocket/cube)!\n\n")
 
 
 check_for_update()
-
-def get_allocated_ram():
-    try:
-        with open("/proc/meminfo", "r") as meminfo:
-            lines = meminfo.readlines()
-            total_memory = int(next(line for line in lines if "MemTotal" in line).split()[1])
-            free_memory = int(next(line for line in lines if "MemFree" in line).split()[1])
-            return {
-                "total_memory_kb": total_memory,
-                "free_memory_kb": free_memory,
-                "used_memory_kb": total_memory - free_memory,
-            }
-    except Exception as e:
-        return {"error": str(e)}
 
 def get_file_info(file_path):
     try:
