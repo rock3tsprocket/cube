@@ -601,7 +601,10 @@ async def changestatus(ctx, *args):
         return
     arguments = ' '.join(args)
     await bot.change_presence(status=discord.Status.online, activity=discord.Activity(name=arguments, type=discord.ActivityType.listening))
-    await ctx.send(f"Now listening to: {arguments}")
+    if arguments == "":
+        await ctx.send("Disabled status")
+    else:
+        await ctx.send(f"Now listening to: {arguments}")
     song = arguments
 
 @tasks.loop(minutes=60)
