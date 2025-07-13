@@ -264,8 +264,9 @@ def ping_server():
 
 positive_gifs = [
     "https://tenor.com/view/chill-guy-my-new-character-gif-2777893510283028272",
-    "https://tenor.com/view/goodnight-goodnight-friends-weezer-weezer-goodnight-gif-7322052181075806988"
-]
+    "https://tenor.com/view/goodnight-goodnight-friends-weezer-weezer-goodnight-gif-7322052181075806988",
+    "https://cdn.discordapp.com/attachments/1319416099917271122/1393959079763902524/rust.gif?ex=6875110f&is=6873bf8f&hm=80e3fd861d53402456b050c3cb66727f800a08620aad99bc4edbbdcc1741cb0d&"
+    ]
 
 def is_positive(sentence):
     sentence_lower = sentence.lower()
