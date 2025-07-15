@@ -15,7 +15,6 @@ from glob import glob
 # Load the .env file
 load_dotenv()
 
-VERSION_URL = "https://goober.whatdidyouexpect.eu"
 UPDATE_URL = "https://raw.githubusercontent.com/rock3tsprocket/cube/refs/heads/main/current_version.json"
 print(UPDATE_URL)
 LOCAL_VERSION_FILE = "current_version.json" 
@@ -23,7 +22,6 @@ TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 PREFIX = os.getenv("BOT_PREFIX")
 PING_LINE = os.getenv("PING_LINE")
 hourlyspeak = int(os.getenv("hourlyspeak"))
-PING_LINE = os.getenv("PING_LINE")
 random_talk_channel_id1 = int(os.getenv("rnd_talk_channel1"))
 random_talk_channel_id2 = int(os.getenv("rnd_talk_channel2"))
 cooldown_time = os.getenv("cooldown")
@@ -37,8 +35,6 @@ last_random_talk_time = 0
 MEMORY_FILE = "memory.json"
 DEFAULT_DATASET_FILE = "defaultdataset.json"
 MEMORY_LOADED_FILE = "MEMORY_LOADED"
-gooberTOKEN = os.getenv("gooberTOKEN")  
-ALIVEPING = os.getenv("ALIVEPING")
 RANDOMTALK = os.getenv("RANDOMTALK")
 song = os.getenv("song")
 
@@ -99,62 +95,7 @@ def get_file_info(file_path):
     except Exception as e:
         return {"error": str(e)}
 
-
-def is_name_available(NAME):
-    if os.getenv("gooberTOKEN"):
-        return
-    try:
-        response = requests.post(f"{VERSION_URL}/check-if-available", json={"name": NAME}, headers={"Content-Type": "application/json"})
-        
-        if response.status_code == 200:
-            data = response.json()
-            return data.get("available", False)
-        else:
-            print(f"{get_translation(LOCALE, 'name_check')}", response.json())
-            return False
-    except Exception as e:
-        print(f"{get_translation(LOCALE, 'name_check2')}", e)
-        return False
-
-
-def register_name(NAME):
-    try:
-        if ALIVEPING == False:
-            return
-        # check if the name is avaliable
-        if not is_name_available(NAME):
-            if os.getenv("gooberTOKEN"):
-                return
-            print(f"Name is already taken. Please choose a different name.")
-            quit()
-        
-        # if it is register it
-        response = requests.post(f"{VERSION_URL}/register", json={"name": NAME}, headers={"Content-Type": "application/json"})
-        
-        if response.status_code == 200:
-            data = response.json()
-            token = data.get("token")
-            
-            if not os.getenv("gooberTOKEN"):
-                print(f"Token: {token}\nPlease add this token to your .env file as gooberTOKEN=<token>.")
-                quit()
-            else:
-                print(f"")
-            
-            return token
-        else:
-            print(f"Token already exists in .env. Continuing with the existing token.", response.json())
-            return None
-    except Exception as e:
-        print(f"Error during registration:", e)
-        return None
-
-register_name(NAME)
-
 nltk.download('punkt')
-
-
-
 
 def load_memory():
     data = []
@@ -227,40 +168,9 @@ async def on_ready():
                 await bot.load_extension(filename)
                 print(f"[INIT] Loaded normal cog: {filename}")
     # the rest of this is either written by me or from goober
-    ping_server()
     post_message.start()
 
 positive_keywords = ["happy", "good", "great", "amazing", "awesome", "joy", "love", "fantastic", "positive", "cheerful", "victory", "favorite", "lmao", "lol", "xd", "XD", "xD", "Xd", "nice"]
-
-def ping_server():
-    if ALIVEPING == "false":
-        print(f"Pinging is disabled! Not telling the server im on...")
-        return
-
-    # Alert from goober central
-    goobres = requests.get(f"{VERSION_URL}/alert")
-    if goobres.status_code == 200:
-        print(f"Alert from goober central: \n{goobres.text}")
-    else:
-        print(f"Alert from cube: \nGoober Central is down: {goobres.status_code}")
-    file_info = get_file_info(MEMORY_FILE)
-    payload = {
-        "name": NAME,
-        "memory_file_info": file_info,
-        "version": local_version,
-        "slash_commands": "no",
-        "token": gooberTOKEN
-    }
-    try:
-        response = requests.post(VERSION_URL+"/ping", json=payload)
-        if response.status_code == 200:
-            print(f"Sent alive ping to goober central!")
-        else:
-            print(f"Failed to send data. Server returned status code: {response.status_code}")
-    except Exception as e:
-        print(f"An error occurred while sending data: {str(e)}")
-
-
 
 positive_gifs = [
     "https://tenor.com/view/chill-guy-my-new-character-gif-2777893510283028272",
