@@ -6,11 +6,12 @@ DEFAULT_VERSION_URL = "https://raw.githubusercontent.com/rock3tsprocket/cube/ref
 LOCAL_VERSION_FILE = "current_version.json"
 SCRIPT_FILE = "bot.py"
 
-choice = input("This updater is not recommended for use, especially if you already cloned Cube from GitHub. In that case, run \"git pull\". If you're sure you want to use this (for example if you can't use Git), you can continue anyway. [y/N]\n")
+choice = input("This updater is not recommended for use, especially if you already cloned Cube from GitHub. In that case, run \"git pull\". If you're sure you want to use this (for example if you can't use Git), you can continue anyway. [y/N] ")
 if choice == "y" or choice == "Y":
     def get_latest_version_info(DEFAULT_VERSION_URL):
         """Fetch the latest version information from the server."""
         try:
+            global response
             response = requests.get(DEFAULT_VERSION_URL, timeout=5)
             response.raise_for_status()  # Will raise HTTPError for bad responses
             return response.json()
@@ -52,15 +53,18 @@ if choice == "y" or choice == "Y":
         example_env = "https://raw.githubusercontent.com/rock3tsprocket/cube/refs/heads/main/example.env"
         if not latest_version or not download_url or not example_env:
             print("Error: Invalid version information received from server.")
-            return
         local_version = get_local_version()
         if local_version != latest_version:
             print(f"New version available: {latest_version} (Current: {local_version})")
             print("Downloading the new version...")
             download_file(download_url, SCRIPT_FILE)
-            download_file(example_env, "example.env")
-            save_local_version(latest_version)
-            print("Update complete! Restart the bot to use the new version, or if you downloaded it for the first time, modify example.env and rename it to .env.")
+            if not os.path.exists(".env"):
+                download_file(example_env, "example.env")
+            save_local_version(response.text)
+            print("Update complete! Restart the bot to use the new version, or if you downloaded it for the first time, modify example.env and rename it to .env.\nIf you want, go check out the cogs at https://github.com/rock3tsprocket/cube/tree/main/cogs!")
+            if not os.path.exists("cogs/"):
+                os.mkdir("cogs")
+                return
         else:
             print(f"You're using the latest version: {local_version}")
 
