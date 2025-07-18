@@ -11,6 +11,7 @@ import os
 import requests
 from dotenv import load_dotenv
 from glob import glob
+import platform
 
 # Load the .env file
 load_dotenv()
@@ -455,8 +456,9 @@ async def about(ctx):
     check_for_update()
     print("-----------------------------------")
     embed: discord.Embed = discord.Embed(title=f"About me", description="", color=0x7B79FF)
-    embed.add_field(name=f"Name", value=f"{NAME}", inline=False)
-    embed.add_field(name=f"Version", value=f"Local: {local_version}\n Latest: {latest_version}\nSource Code: https://github.com/rock3tsprocket/cube\n License: GNU AGPL-3.0", inline=False)
+    embed.add_field(name="Name", value=f"{NAME}", inline=False)
+    embed.add_field(name="Version", value=f"Local: {local_version}\n Latest: {latest_version}\nSource Code: https://github.com/rock3tsprocket/cube\n License: GNU AGPL-3.0", inline=False)
+    embed.add_field(name="System Information", value="OS: " + platform.platform(), inline=False)
 
     await send_message(ctx, embed=embed)
 
