@@ -341,9 +341,6 @@ async def on_message(message):
     if message.author.bot:
         return
 
-    if not USERTRAIN_ENABLED:
-        return
-
     if str(message.author.id) in BLACKLISTED_USERS:
         return
 
@@ -359,6 +356,9 @@ async def on_message(message):
 
     if any(word in message.content for word in ["faggot", "fag", "nigger", "nigga"]):
         await bot.process_commands(message)
+        return
+
+    if not USERTRAIN_ENABLED:
         return
 
     if message.content:
