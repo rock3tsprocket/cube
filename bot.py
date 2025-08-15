@@ -79,10 +79,10 @@ def check_for_update():
     local_version = get_local_version() 
     if local_version != latest_version:
         print(f"New version available: {latest_version} (Current: {local_version})")
-        print(f"Check out the commit messages for cube (https://github.com/rock3tsprocket/cube)!\n\n")
     else:
         print(f"You're using the latest version: {local_version}")
-        print(f"Check out the commit messages for cube (https://github.com/rock3tsprocket/cube)!\n\n")
+
+    print("Check out the commit messages for cube (https://github.com/rock3tsprocket/cube)!\n\n")
 
 
 check_for_update()
