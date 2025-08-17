@@ -131,13 +131,8 @@ def train_markov_model(memory, additional_data=None):
         text += "\n" + "\n".join(additional_data)
     model = markovify.NewlineText(text, state_size=2)
     return model
-#this doesnt work and im extremely pissed and mad
-def append_mentions_to_18digit_integer(message):
-    pattern = r'\b\d{18}\b'
-    return re.sub(pattern, lambda match: f"<@{match.group(0)}>", message)
 
 def preprocess_message(message):
-    message = append_mentions_to_18digit_integer(message)
     tokens = word_tokenize(message)
     tokens = [token for token in tokens if token.isalnum()]
     return " ".join(tokens)
@@ -249,13 +244,13 @@ async def talk(ctx):
     if markov_model:
         response = None
         for _ in range(100):  # im going to shit my pants 10 times to get a coherent sentence
-            response = markov_model.make_sentence(tries=100)
-            if response and response not in generated_sentences:
+           response = markov_model.make_sentence(tries=100)
+           if response and response not in generated_sentences:
                 # preprocess shit for grammer
                 response = improve_sentence_coherence(response)
                 generated_sentences.add(response)
                 break
-        
+            
         if response:
             async with ctx.typing():            
                 cleaned_response = re.sub(r'[^\w\s]', '', response)  
@@ -277,8 +272,9 @@ async def talk(ctx):
 
 def improve_sentence_coherence(sentence):
 
-    sentence = sentence.replace(" i ", " I ")  
-    return sentence
+    sentence = sentence.replace(" i ", " I ")
+    sentence2 = sentence.replace(" gon na ", " gonna ") # this doesn't work :angry:
+    return sentence2
 
 def rephrase_for_coherence(sentence):
 
@@ -362,8 +358,7 @@ async def on_message(message):
         return
 
     if message.content:
-        formatted_message = append_mentions_to_18digit_integer(message.content)
-        cleaned_message = preprocess_message(formatted_message)
+        cleaned_message = preprocess_message(message.content)
         if cleaned_message:
             memory.append(cleaned_message)
             save_memory(memory)
