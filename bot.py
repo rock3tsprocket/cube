@@ -537,3 +537,4 @@ async def post_message():
 
 
 bot.run(TOKEN)
+print("The bot is going down NOW!")
