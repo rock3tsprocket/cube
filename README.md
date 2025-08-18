@@ -4,7 +4,7 @@ Discord bot that learns from what people say!
 
 Please see the [wiki](https://github.com/rock3tsprocket/cube/wiki)
 
-Keep in mind that most of the bot (the parts written by WhatDidYouExpect) was written at 2am
+Keep in mind that most of the parts of the bot that were written by WhatDidYouExpect were probably written at 2am
 
 
 Special thanks to [me](https://github.com/rock3tsprocket) for being the only one I know of that's hosting Cube 24/7
