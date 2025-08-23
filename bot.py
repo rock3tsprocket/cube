@@ -466,7 +466,7 @@ async def stats(ctx):
 
     file_size = os.path.getsize(MEMORY_FILE)
     
-    with open(memory_file, 'r') as file:
+    with open(MEMORY_FILE, 'r') as file:
         line_count = sum(1 for _ in file)
 
     embed = discord.Embed(title="Bot Stats", description="Data about the the bot's memory.", color=0x7B79FF)
