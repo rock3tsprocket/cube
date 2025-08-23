@@ -464,8 +464,7 @@ async def stats(ctx):
         await ctx.send("You do not have permission to use this command!")
         return
 
-    memory_file = 'memory.json'
-    file_size = os.path.getsize(memory_file)
+    file_size = os.path.getsize(MEMORY_FILE)
     
     with open(memory_file, 'r') as file:
         line_count = sum(1 for _ in file)
