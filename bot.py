@@ -16,12 +16,12 @@ import platform
 # Load the .env file
 load_dotenv()
 
-UPDATE_URL = "https://raw.githubusercontent.com/rock3tsprocket/cube/refs/heads/main/current_version.json"
-print(UPDATE_URL)
-LOCAL_VERSION_FILE = "current_version.json" 
-TOKEN = os.getenv("DISCORD_BOT_TOKEN")
-PREFIX = os.getenv("BOT_PREFIX")
-PING_LINE = os.getenv("PING_LINE")
+update_url = "https://raw.githubusercontent.com/rock3tsprocket/cube/refs/heads/main/current_version.json"
+print(update_url)
+local_version_file = "current_version.json" 
+token = os.getenv("token")
+prefix = os.getenv("prefix")
+ping_line = os.getenv("ping_line")
 hourlyspeak = int(os.getenv("hourlyspeak"))
 random_talk_channel_id1 = int(os.getenv("rnd_talk_channel1"))
 random_talk_channel_id2 = int(os.getenv("rnd_talk_channel2"))
@@ -29,14 +29,14 @@ cooldown_time = os.getenv("cooldown")
 splashtext = os.getenv("splashtext")
 ownerid = int(os.getenv("ownerid"))
 showmemenabled = os.getenv("showmemenabled")
-BLACKLISTED_USERS = os.getenv("BLACKLISTED_USERS", "").split(",")
-USERTRAIN_ENABLED = os.getenv("USERTRAIN_ENABLED", "true").lower() == "true"
-NAME = os.getenv("NAME")
+blacklisted_users = os.getenv("blacklisted_users", "").split(",")
+usertrain_enabled = os.getenv("usertrain_enabled")
+name = os.getenv("name")
 last_random_talk_time = 0
-MEMORY_FILE = "memory.json"
-DEFAULT_DATASET_FILE = "defaultdataset.json"
-MEMORY_LOADED_FILE = "MEMORY_LOADED"
-RANDOMTALK = os.getenv("RANDOMTALK")
+memory_file = "memory.json"
+default_dataset = "defaultdataset.json"
+memory_loaded_file = "MEMORY_LOADED"
+randomtalk = os.getenv("randomtalk")
 song = os.getenv("song")
 
 print(splashtext) # you can use https://patorjk.com/software/taag/ for 3d text or just remove this entirely
@@ -44,7 +44,7 @@ print(splashtext) # you can use https://patorjk.com/software/taag/ for 3d text o
 def get_latest_version_info():
     """Fetch the latest version information from the server."""
     try:
-        response = requests.get(UPDATE_URL, timeout=5)
+        response = requests.get(update_url, timeout=5)
         response.raise_for_status()  # Will raise HTTPError for bad responses
         return response.json()
     except requests.RequestException as e:
@@ -53,8 +53,8 @@ def get_latest_version_info():
 
 def get_local_version():
     """Read the current version from the local file."""
-    if os.path.exists(LOCAL_VERSION_FILE):
-        with open(LOCAL_VERSION_FILE, "r") as f:
+    if os.path.exists(local_version_file):
+        with open(local_version_file, "r") as f:
             return json.loads(f.read().strip())["version"]
     return "0.0.0"
 
@@ -101,26 +101,26 @@ nltk.download('punkt')
 def load_memory():
     data = []
 
-    # load data from MEMORY_FILE
+    # load data from memory_file
     try:
-        with open(MEMORY_FILE, "r") as f:
+        with open(memory_file, "r") as f:
             data = json.load(f)
     except FileNotFoundError:
         pass
 
-    if not os.path.exists(MEMORY_LOADED_FILE):
+    if not os.path.exists(memory_loaded_file):
         try:
-            with open(DEFAULT_DATASET_FILE, "r") as f:
+            with open(default_dataset, "r") as f:
                 default_data = json.load(f)
                 data.extend(default_data) 
         except FileNotFoundError:
             pass
-        with open(MEMORY_LOADED_FILE, "w") as f:
+        with open(memory_loaded_file, "w") as f:
             f.write("Data loaded") 
     return data
 
 def save_memory(memory):
-    with open(MEMORY_FILE, "w") as f:
+    with open(memory_file, "w") as f:
         json.dump(memory, f, indent=4)
 
 def train_markov_model(memory, additional_data=None):
@@ -141,7 +141,7 @@ def preprocess_message(message):
 intents = discord.Intents.default()
 intents.messages = True
 intents.message_content = True
-bot = commands.Bot(command_prefix=PREFIX, intents=intents, activity=discord.Activity(name=song, type=discord.ActivityType.listening))
+bot = commands.Bot(command_prefix=prefix, intents=intents, activity=discord.Activity(name=song, type=discord.ActivityType.listening))
 memory = load_memory() 
 markov_model = train_markov_model(memory)
 
@@ -295,7 +295,7 @@ async def help(ctx, *args):
         
         if command:
             embed = discord.Embed(
-                title=f"Help: {PREFIX}{command_name}",
+                title=f"Help: {prefix}{command_name}",
                 description=f"**Description:** {command.help}",
                 color=0x7B79FF
             )
@@ -321,11 +321,11 @@ async def help(ctx, *args):
                     custom_commands.append(command.name)
 
         if custom_commands:
-            embed.add_field(name="Custom Commands", value="\n".join([f"{PREFIX}{command}" for command in custom_commands]), inline=False)
+            embed.add_field(name="Custom Commands", value="\n".join([f"{prefix}{command}" for command in custom_commands]), inline=False)
         #    embed.set_footer(text="This bot has Super Cube Powers.")
 
         for category, commands_list in command_categories.items():
-            commands_in_category = "\n".join([f"{PREFIX}{command}" for command in commands_list])
+            commands_in_category = "\n".join([f"{prefix}{command}" for command in commands_list])
             embed.add_field(name=category, value=commands_in_category, inline=False)
 
         await ctx.send(embed=embed)
@@ -337,7 +337,7 @@ async def on_message(message):
     if message.author.bot:
         return
 
-    if str(message.author.id) in BLACKLISTED_USERS:
+    if str(message.author.id) in blacklisted_users:
         return
 
     random_talk_channels = [random_talk_channel_id2, random_talk_channel_id1] 
@@ -346,7 +346,7 @@ async def on_message(message):
     }
     default_cooldown = 10800
 
-    if message.content.startswith((f"{PREFIX}talk", f"{PREFIX}mem", f"{PREFIX}help", f"{PREFIX}stats", f"{PREFIX}")):
+    if message.content.startswith((f"{prefix}talk", f"{prefix}mem", f"{prefix}help", f"{prefix}stats", f"{prefix}")):
         await bot.process_commands(message)
         return
 
@@ -354,7 +354,7 @@ async def on_message(message):
         await bot.process_commands(message)
         return
 
-    if not USERTRAIN_ENABLED:
+    if not usertrain_enabled:
         return
 
     if message.content:
@@ -385,7 +385,7 @@ async def on_message(message):
     random_chance = random.randint(0, 20)
 
     # talk randomly only in the specified channels
-    if RANDOMTALK == "True":
+    if randomtalk == "True":
         if message.channel.id in random_talk_channels and random_chance >= 10:
             current_time = time.time()
             print(f"Random chance: {random_chance}, Time passed: {current_time - last_random_talk_time}")
@@ -417,7 +417,7 @@ async def ping(ctx):
     LOLembed = discord.Embed(
         title="Pong!!",
         description=(
-            f"{PING_LINE}\n"
+            f"{ping_line}\n"
             f"`Bot Latency: {latency}ms`\n"
         ),
         color=0x7B79FF
@@ -451,7 +451,7 @@ async def about(ctx):
     check_for_update()
     print("-----------------------------------")
     embed: discord.Embed = discord.Embed(title=f"About me", description="", color=0x7B79FF)
-    embed.add_field(name="Name", value=f"{NAME}", inline=False)
+    embed.add_field(name="Name", value=f"{name}", inline=False)
     embed.add_field(name="Version", value=f"Local: {local_version}\n Latest: {latest_version}\nSource Code: https://github.com/rock3tsprocket/cube\n License: GNU AGPL-3.0", inline=False)
     embed.add_field(name="System Information", value="OS: " + platform.platform(), inline=False)
 
@@ -464,27 +464,27 @@ async def stats(ctx):
         await ctx.send("You do not have permission to use this command!")
         return
 
-    file_size = os.path.getsize(MEMORY_FILE)
+    file_size = os.path.getsize(memory_file)
     
-    with open(MEMORY_FILE, 'r') as file:
+    with open(memory_file, 'r') as file:
         line_count = sum(1 for _ in file)
 
     embed = discord.Embed(title="Bot Stats", description="Data about the the bot's memory.", color=0x7B79FF)
     embed.add_field(name="File Stats", value=f"Size: {file_size} bytes\nLines: {line_count}", inline=False)
     embed.add_field(name="Version", value=f"Local: {local_version} \nLatest: {latest_version}", inline=False)
-    embed.add_field(name="Variable Info", value=f"Prefix: {PREFIX} \nOwner ID: {ownerid} \nCooldown: {cooldown_time} \nPing line: {PING_LINE} \nListening to: {song}", inline=False)
+    embed.add_field(name="Variable Info", value=f"Prefix: {prefix} \nOwner ID: {ownerid} \nCooldown: {cooldown_time} \nPing line: {ping_line} \nListening to: {song}", inline=False)
 
     
     await ctx.send(embed=embed)
 @bot.command()
 async def mem(ctx):
-    if showmemenabled != "true":
+    if not showmemenabled:
         return
     memory = load_memory()
     memory_text = json.dumps(memory, indent=4)
     if len(memory_text) > 1024:
-        with open(MEMORY_FILE, "r") as f:
-            await ctx.send(" ", file=discord.File(f, MEMORY_FILE))
+        with open(memory_file, "r") as f:
+            await ctx.send(" ", file=discord.File(f, memory_file))
     else:
         embed = discord.Embed(title="Memory Contents", description="The bot's memory.", color=0x7B79FF)
         embed.add_field(name="Memory Data", value=f"```json\n{memory_text}\n```", inline=False)
@@ -530,5 +530,5 @@ async def post_message():
             await channel.send(response)
 
 
-bot.run(TOKEN)
+bot.run(token)
 print("The bot is going down NOW!")
