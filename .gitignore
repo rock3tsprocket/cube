@@ -1,6 +1,6 @@
 .env
 __pycache__
-current_version.txt
+current_version.json
 MEMORY_LOADED
 memory.json
 *.pkl
