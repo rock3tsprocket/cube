@@ -3,3 +3,4 @@ markovify
 nltk
 requests
 python-dotenv
+psutil
