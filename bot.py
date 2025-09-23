@@ -287,48 +287,41 @@ bot.help_command = None
 
 
 @bot.command()
-async def help(ctx, *args):
+async def help(ctx):
+    embed = discord.Embed(
+        title="Bot Help",
+        description="List of commands grouped by category.",
+        color=0x7B79FF
+    )
 
-    if args:
-        command_name = args[0]
-        command = bot.get_command(command_name)
-        
-        if command:
-            embed = discord.Embed(
-                title=f"Help: {prefix}{command_name}",
-                description=f"**Description:** {command.help}",
-                color=0x7B79FF
-            )
-            await ctx.send(embed=embed)
-        else:
-            await ctx.send(f"Command `{command_name}` not found.")
-    else:
+    command_categories = {
+        "General": ["mem", "talk", "ask", "ping", "echo", "customcommands"],
+        "Administration": ["stats"]
+    }
 
-        embed = discord.Embed(
-            title="Bot Help",
-            description="List of commands grouped by category.",
-            color=0x7B79FF
-        )
+    for category, commands_list in command_categories.items():
+        commands_in_category = "\n".join([f"{prefix}{command}" for command in commands_list])
+        embed.add_field(name=category, value=commands_in_category, inline=False)
 
-        command_categories = {
-            "General": ["mem", "talk", "ask", "ping", "echo"],
-            "Administration": ["stats"]
-        }
-        custom_commands: List[str] = []
-        for cog_name, cog in bot.cogs.items():
-            for command in cog.get_commands():
-                if command.name not in command_categories["General"] and command.name not in command_categories["Administration"]:
-                    custom_commands.append(command.name)
+    await ctx.send(embed=embed)
 
-        if custom_commands:
-            embed.add_field(name="Custom Commands", value="\n".join([f"{prefix}{command}" for command in custom_commands]), inline=False)
-        #    embed.set_footer(text="This bot has Super Cube Powers.")
+@bot.command()
+async def customcommands(ctx):
+    embed = discord.Embed(
+        title="Bot Help",
+        description="List of custom commands.",
+        color=0x7B79FF
+    )
 
-        for category, commands_list in command_categories.items():
-            commands_in_category = "\n".join([f"{prefix}{command}" for command in commands_list])
-            embed.add_field(name=category, value=commands_in_category, inline=False)
+    custom_commands: List[str] = []
+    for cog_name, cog in bot.cogs.items():
+        for command in cog.get_commands():
+            custom_commands.append(command.name)
 
-        await ctx.send(embed=embed)
+    embed.add_field(name="Custom Commands", value="\n".join([f"{prefix}{command}" for command in custom_commands]), inline=False)
+
+    await ctx.send(embed=embed)
+
 
 @bot.event
 async def on_message(message):
