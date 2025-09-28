@@ -163,7 +163,9 @@ async def on_ready():
                 print(f"[INIT] Loading normal cog: {filename}...")
                 await bot.load_extension(filename)
                 print(f"[INIT] Loaded normal cog: {filename}")
-    # the rest of this is either written by me or from goober
+    # the rest of this is either written by me or from the original goober
+    synced_cogs = await bot.tree.sync()
+    print(f"Synced {len(synced_cogs)} cogs.")
     post_message.start()
 
 positive_keywords = ["happy", "good", "great", "amazing", "awesome", "joy", "love", "fantastic", "positive", "cheerful", "victory", "favorite", "lmao", "lol", "xd", "XD", "xD", "Xd", "nice"]
@@ -321,7 +323,6 @@ async def customcommands(ctx):
     embed.add_field(name="Custom Commands", value="\n".join([f"{prefix}{command}" for command in custom_commands]), inline=False)
 
     await ctx.send(embed=embed)
-
 
 @bot.event
 async def on_message(message):
