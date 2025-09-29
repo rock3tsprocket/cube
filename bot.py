@@ -10,7 +10,7 @@ import re
 import os
 import requests
 from dotenv import load_dotenv
-from glob import glob
+import glob
 import platform
 
 # Load the .env file
@@ -150,20 +150,19 @@ used_words = set()
 
 @bot.event
 async def on_ready():
+    global are_cogs_loaded
     print(f"Logged in as {bot.user}")
-    # the following code has been taken from Titanium (https://github.com/RestartB/titanium)
-    for filename in glob(
-        os.path.join("cogs", "**"), recursive=True, include_hidden=False
-    ):
-        if not os.path.isdir(filename):
-            # Determine if file is a python file
-            if filename.endswith(".py") and not filename.startswith("."):
-                filename = filename.replace("\\", "/").replace("/", ".")[:-3]
-
-                print(f"[INIT] Loading normal cog: {filename}...")
-                await bot.load_extension(filename)
-                print(f"[INIT] Loaded normal cog: {filename}")
-    # the rest of this is either written by me or from the original goober
+    are_cogs_loaded = False
+    if not are_cogs_loaded:
+        listofcogs = glob.glob("cogs/*.py")
+        for cog in listofcogs:
+            loadable_cog = cog.replace("/", ".").replace(".py", "")
+            try:
+                await bot.load_extension(loadable_cog)
+                print(f"Loaded cog {loadable_cog.replace("cogs.", "")} successfully.")
+            except Exception as fail:
+                print(f"Error loading cog {loadable_cog.replace("cogs.", "")}: {fail}")
+        are_cogs_loaded = True
     synced_cogs = await bot.tree.sync()
     print(f"Synced {len(synced_cogs)} cogs.")
     post_message.start()
