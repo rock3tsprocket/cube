@@ -148,10 +148,11 @@ markov_model = train_markov_model(memory)
 generated_sentences = set()
 used_words = set()
 
+are_cogs_loader = False
+
 @bot.event
 async def on_ready():
     global are_cogs_loaded
-    print(f"Logged in as {bot.user}")
     are_cogs_loaded = False
     if not are_cogs_loaded:
         listofcogs = glob.glob("cogs/*.py")
