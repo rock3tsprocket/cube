@@ -141,7 +141,7 @@ def preprocess_message(message):
 intents = discord.Intents.default()
 intents.messages = True
 intents.message_content = True
-bot = commands.Bot(command_prefix=prefix, intents=intents, activity=discord.Activity(name=status, type=discord.ActivityType.listening))
+bot = commands.Bot(command_prefix=prefix, intents=intents)
 memory = load_memory() 
 markov_model = train_markov_model(memory)
 
@@ -164,9 +164,9 @@ async def on_ready():
             except Exception as fail:
                 print(f"Error loading cog {loadable_cog.replace("cogs.", "")}: {fail}")
         are_cogs_loaded = True
-    synced_cogs = await bot.tree.sync()
-    print(f"Synced {len(synced_cogs)} cogs.")
     post_message.start()
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.custom, name="custom", state=status))
+
 
 positive_keywords = ["happy", "good", "great", "amazing", "awesome", "joy", "love", "fantastic", "positive", "cheerful", "victory", "favorite", "lmao", "lol", "xd", "XD", "xD", "Xd", "nice"]
 
@@ -507,7 +507,13 @@ async def changestatus(ctx, *args):
     else:
         await ctx.send(f"Now listening to: {arguments}")
     status = arguments
-
+@bot.command()
+async def sync_slash_commands(ctx):
+    if int(ctx.author.id) != int(ownerid):
+        return
+    synced_commands = await bot.tree.sync()
+    print(f"Synced {len(synced_commands)} commands successfully!")
+    await ctx.send(f"Synced {len(synced_commands)} commands successfully!")
 @tasks.loop(minutes=60)
 async def post_message():
     channel_id = hourlyspeak
