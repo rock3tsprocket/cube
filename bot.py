@@ -352,11 +352,15 @@ async def on_message(message):
         return
 
     if message.content:
+        with open("./opted-in.txt", 'r') as f:
+            optedinusers = f.read()
+
         cleaned_message = preprocess_message(message.content)
         if cleaned_message:
-            memory.append(cleaned_message)
-            save_memory(memory)
-            markov_model = train_markov_model(memory)
+            if str(message.author.id) in optedinusers:
+                memory.append(cleaned_message)
+                save_memory(memory)
+                markov_model = train_markov_model(memory)
 
 
     cooldown_time = cooldowns.get(message.channel.id, default_cooldown)
@@ -507,6 +511,7 @@ async def changestatus(ctx, *args):
     else:
         await ctx.send(f"Now listening to: {arguments}")
     status = arguments
+
 @bot.command()
 async def sync_slash_commands(ctx):
     if int(ctx.author.id) != int(ownerid):
@@ -514,6 +519,28 @@ async def sync_slash_commands(ctx):
     synced_commands = await bot.tree.sync()
     print(f"Synced {len(synced_commands)} commands successfully!")
     await ctx.send(f"Synced {len(synced_commands)} commands successfully!")
+
+# opt-in/out command
+@bot.command()
+async def opt(ctx, arg1 = None):
+    with open("opted-in.txt", 'a+') as f:
+        if str(ctx.author.id) not in f.read() and arg1 == "in":
+            f.write(f"{str(ctx.author.id)}\n")
+            await ctx.send(f"You have opted into message collection by {name}.\nIf you change your mind, run `{prefix}opt out`")
+        
+        elif str(ctx.author.id) in f.read() and arg1 == "out":
+            f.write(f.read().replace(f"{str(ctx.author.id)}\n", ""))
+            await ctx.send(f"You have opted out of message collection by {name}.\nIf you change your mind, run `{prefix}opt in`")
+        
+        else:
+            optedinusers = f.read()
+            print(optedinusers)
+            usermessagecollection = str(ctx.author.id) in optedinusers
+            await ctx.send(f"To opt into message collection by {name}, run `{prefix}opt in.`\n"
+            f"To opt out of message collection, run `{prefix}opt out.`\n"
+            f"Message collection is off by default.\n"
+            f"Opted in: {usermessagecollection}.")
+
 @tasks.loop(minutes=60)
 async def post_message():
     channel_id = hourlyspeak
