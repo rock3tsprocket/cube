@@ -318,7 +318,7 @@ async def help(ctx):
     )
 
     command_categories = {
-        "General": ["mem", "talk", "ask", "ping", "echo", "customcommands"],
+        "General": ["mem", "talk", "ask", "ping", "echo", "customcommands", "opt"],
         "Administration": ["stats"]
     }
 
