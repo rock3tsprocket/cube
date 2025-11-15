@@ -6,3 +6,4 @@ memory.json
 *.pkl
 *.json
 venv/
+opted-in.txt
