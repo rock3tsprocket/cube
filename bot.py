@@ -137,6 +137,27 @@ def preprocess_message(message):
     tokens = [token for token in tokens if token.isalnum()]
     return " ".join(tokens)
 
+# opt-in message collection
+def togglemessagecollection(user = None, operation = None):
+    # list of opted-in users
+    with open("opted-in.txt", 'r') as f:
+        optedinusers = f.read()
+
+    # opt-in process
+    if str(user) not in optedinusers and operation == "in":
+        with open("opted-in.txt", 'a') as f:
+            f.write(f"{user}\n")
+        return "optedin"
+    
+    # opt-out process
+    elif str(user) in optedinusers and operation == "out":
+        with open("opted-in.txt", 'w') as f:
+                  f.write(optedinusers.replace(f"{user}\n", ""))
+        return "optedout"
+    
+    else:
+        usermessagecollection = str(user) in optedinusers
+        return usermessagecollection
 
 intents = discord.Intents.default()
 intents.messages = True
@@ -352,15 +373,16 @@ async def on_message(message):
         return
 
     if message.content:
-        with open("./opted-in.txt", 'r') as f:
+        with open("opted-in.txt", 'r') as f:
             optedinusers = f.read()
 
         cleaned_message = preprocess_message(message.content)
         if cleaned_message:
-            if str(message.author.id) in optedinusers:
-                memory.append(cleaned_message)
-                save_memory(memory)
-                markov_model = train_markov_model(memory)
+            if not str(message.author.id) in optedinusers:
+                return
+            memory.append(cleaned_message)
+            save_memory(memory)
+            markov_model = train_markov_model(memory)
 
 
     cooldown_time = cooldowns.get(message.channel.id, default_cooldown)
@@ -523,23 +545,19 @@ async def sync_slash_commands(ctx):
 # opt-in/out command
 @bot.command()
 async def opt(ctx, arg1 = None):
-    with open("opted-in.txt", 'a+') as f:
-        if str(ctx.author.id) not in f.read() and arg1 == "in":
-            f.write(f"{str(ctx.author.id)}\n")
-            await ctx.send(f"You have opted into message collection by {name}.\nIf you change your mind, run `{prefix}opt out`")
-        
-        elif str(ctx.author.id) in f.read() and arg1 == "out":
-            f.write(f.read().replace(f"{str(ctx.author.id)}\n", ""))
-            await ctx.send(f"You have opted out of message collection by {name}.\nIf you change your mind, run `{prefix}opt in`")
-        
-        else:
-            optedinusers = f.read()
-            print(optedinusers)
-            usermessagecollection = str(ctx.author.id) in optedinusers
-            await ctx.send(f"To opt into message collection by {name}, run `{prefix}opt in.`\n"
-            f"To opt out of message collection, run `{prefix}opt out.`\n"
-            f"Message collection is off by default.\n"
-            f"Opted in: {usermessagecollection}.")
+    usermessagecollection = togglemessagecollection(str(ctx.author.id), arg1)
+    
+    if usermessagecollection == "optedin":
+        await ctx.send(f"You have opted into message collection by {name}.\nIf you change your mind, run `{prefix}opt out`")
+    
+    elif usermessagecollection == "optedout":
+        await ctx.send(f"You have opted out of message collection by {name}.\nIf you change your mind, run `{prefix}opt in`")
+    
+    else:
+        await ctx.send(f"To opt into message collection by {name}, run `{prefix}opt in.`\n"
+        f"To opt out of message collection, run `{prefix}opt out.`\n"
+        f"Opted in: {usermessagecollection}.")
+
 
 @tasks.loop(minutes=60)
 async def post_message():
