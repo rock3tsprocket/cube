@@ -586,6 +586,14 @@ async def opt(ctx, arg1 = None):
         f"To opt out of message collection, run `{prefix}opt out.`\n"
         f"Opted in: {usermessagecollection}.")
 
+# get alert
+@bot.hybrid_command()
+async def getalert(ctx):
+    alert = requests.get(f"{version_url}/alert")
+    if alert.status_code != 200:
+        await ctx.send(f"Failed to get alert: {alert.status_code}\n{alert.text}")
+        return
+    await ctx.send(f"Alert: {alert.text}")
 
 @tasks.loop(minutes=60)
 async def post_message():
