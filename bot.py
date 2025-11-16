@@ -16,7 +16,9 @@ import platform
 # Load the .env file
 load_dotenv()
 
-update_url = "https://raw.githubusercontent.com/rock3tsprocket/cube/refs/heads/main/current_version.json"
+version_url = os.getenv("version_url")
+#update_url = "https://raw.githubusercontent.com/rock3tsprocket/cube/refs/heads/main/current_version.json"
+update_url = f"{version_url}/latest_version.json"
 print(update_url)
 local_version_file = "current_version.json" 
 token = os.getenv("token")
@@ -38,6 +40,7 @@ default_dataset = "defaultdataset.json"
 memory_loaded_file = "MEMORY_LOADED"
 randomtalk = os.getenv("randomtalk")
 status = os.getenv("status")
+aliveping = os.getenv("aliveping")
 
 print(splashtext) # you can use https://patorjk.com/software/taag/ for 3d text or just remove this entirely
 
@@ -159,6 +162,25 @@ def togglemessagecollection(user = None, operation = None):
         usermessagecollection = str(user) in optedinusers
         return usermessagecollection
 
+# alive ping
+def ping_server():
+    if not aliveping:
+        print("Alive ping disabled, not pinging server.")
+        return
+
+    file_info = get_file_info(memory_file)
+    payload = {
+            "name": name,
+            "memory_file_info": file_info,
+            "slash_commands": False
+            }
+    response = requests.post(f"{version_url}/ping", json=payload)
+    if response.status_code == 200:
+        print("Pinged central server successfully.")
+    else:
+        print(f"Did not ping central server successfully.\nStatus code: {response.status_code}\n JSON response: {response.json}")
+
+
 intents = discord.Intents.default()
 intents.messages = True
 intents.message_content = True
@@ -185,6 +207,12 @@ async def on_ready():
             except Exception as fail:
                 print(f"Error loading cog {loadable_cog.replace("cogs.", "")}: {fail}")
         are_cogs_loaded = True
+    ping_server()
+
+    # print alert
+    alert = requests.get(f"{version_url}/alert")
+    print(f"Alert: {alert.text}")
+
     post_message.start()
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.custom, name="custom", state=status))
 
