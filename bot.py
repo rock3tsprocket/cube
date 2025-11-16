@@ -257,7 +257,7 @@ async def send_message(ctx, message=None, embed=None, file=None, edit=False, mes
                 sent_message = await ctx.send(file=file)
         return sent_message
 
-@bot.command()
+@bot.hybrid_command()
 async def ask(ctx, *, argument: str):
     if markov_model:
         response = None
@@ -290,7 +290,7 @@ async def ask(ctx, *, argument: str):
     else:
         await send_message(ctx, "I need to learn more from messages before I can talk.")
 
-@bot.command()
+@bot.hybrid_command()
 async def talk(ctx):
     if markov_model:
         response = None
@@ -337,7 +337,7 @@ def rephrase_for_coherence(sentence):
 bot.help_command = None
 
 
-@bot.command()
+@bot.hybrid_command()
 async def help(ctx):
     embed = discord.Embed(
         title="Bot Help",
@@ -347,7 +347,7 @@ async def help(ctx):
 
     command_categories = {
         "General": ["mem", "talk", "ask", "ping", "echo", "customcommands", "opt"],
-        "Administration": ["stats"]
+        "Administration": ["stats", "sync_slash_commands"]
     }
 
     for category, commands_list in command_categories.items():
@@ -356,7 +356,7 @@ async def help(ctx):
 
     await ctx.send(embed=embed)
 
-@bot.command()
+@bot.hybrid_command()
 async def customcommands(ctx):
     embed = discord.Embed(
         title="Bot Help",
@@ -456,7 +456,7 @@ async def on_message(message):
     # process any commands in the message
     await bot.process_commands(message)
 
-@bot.command()
+@bot.hybrid_command()
 async def ping(ctx):
     await ctx.defer()
     #stolen from my expect bot very proud
@@ -493,7 +493,7 @@ async def echo_ping(ctx, *args):
         await ctx.send(arguments)
 
 # backported about command
-@bot.command()
+@bot.hybrid_command()
 async def about(ctx):
     print("-----------------------------------\n\n")
     check_for_update()
@@ -506,7 +506,7 @@ async def about(ctx):
     await send_message(ctx, embed=embed)
 
 
-@bot.command()
+@bot.hybrid_command()
 async def stats(ctx):
     if ctx.author.id != ownerid :
         await ctx.send("You do not have permission to use this command!")
@@ -524,7 +524,7 @@ async def stats(ctx):
 
     
     await ctx.send(embed=embed)
-@bot.command()
+@bot.hybrid_command()
 async def mem(ctx):
     if not showmemenabled:
         return
@@ -552,14 +552,14 @@ async def shell(ctx):
 async def changestatus(ctx, *args):
     global status
     if ctx.author.id != ownerid:
-        await ctx.send("You do not have permission to use this command!")
+        await ctx.send("You do not have permission to use this command")
         return
-    arguments = ' '.join(args)
+    arguments = " ".join(args)
     await bot.change_presence(status=discord.Status.online, activity=discord.Activity(name=arguments))
     if arguments == "":
         await ctx.send("Disabled status")
     else:
-        await ctx.send(f"Now listening to: {arguments}")
+        await ctx.send(f"New status: {arguments}")
     status = arguments
 
 @bot.command()
@@ -571,7 +571,7 @@ async def sync_slash_commands(ctx):
     await ctx.send(f"Synced {len(synced_commands)} commands successfully!")
 
 # opt-in/out command
-@bot.command()
+@bot.hybrid_command()
 async def opt(ctx, arg1 = None):
     usermessagecollection = togglemessagecollection(str(ctx.author.id), arg1)
     
