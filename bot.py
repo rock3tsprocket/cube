@@ -172,7 +172,7 @@ def ping_server():
     payload = {
             "name": name,
             "memory_file_info": file_info,
-            "slash_commands": False
+            "slash_commands": True
             }
     response = requests.post(f"{version_url}/ping", json=payload)
     if response.status_code == 200:
