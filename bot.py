@@ -41,6 +41,7 @@ memory_loaded_file = "MEMORY_LOADED"
 randomtalk = os.getenv("randomtalk")
 status = os.getenv("status")
 aliveping = os.getenv("aliveping")
+optinsystem = os.getenv("optinsystem")
 
 print(splashtext) # you can use https://patorjk.com/software/taag/ for 3d text or just remove this entirely
 
@@ -142,6 +143,9 @@ def preprocess_message(message):
 
 # opt-in message collection
 def togglemessagecollection(user = None, operation = None):
+    if optinsystem == "False":
+        return "forced"
+
     # list of opted-in users
     with open("opted-in.txt", 'r') as f:
         optedinusers = f.read()
@@ -406,7 +410,8 @@ async def on_message(message):
 
         cleaned_message = preprocess_message(message.content)
         if cleaned_message:
-            if not str(message.author.id) in optedinusers:
+            # i'm sorry
+            if optinsystem == "True" and not str(message.author.id) in optedinusers:
                 return
             memory.append(cleaned_message)
             save_memory(memory)
@@ -575,7 +580,10 @@ async def sync_slash_commands(ctx):
 async def opt(ctx, arg1 = None):
     usermessagecollection = togglemessagecollection(str(ctx.author.id), arg1)
     
-    if usermessagecollection == "optedin":
+    if usermessagecollection == "forced":
+        await ctx.send("Message collection is forced in this bot.")
+
+    elif usermessagecollection == "optedin":
         await ctx.send(f"You have opted into message collection by {name}.\nIf you change your mind, run `{prefix}opt out`")
     
     elif usermessagecollection == "optedout":
