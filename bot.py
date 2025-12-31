@@ -182,7 +182,7 @@ def ping_server():
     if response.status_code == 200:
         print("Pinged central server successfully.")
     else:
-        print(f"Did not ping central server successfully.\nStatus code: {response.status_code}\n JSON response: {response.json}")
+        print(f"Did not ping central server successfully.\nStatus code: {response.status_code}\n Response: {response.text}")
 
 
 intents = discord.Intents.default()
