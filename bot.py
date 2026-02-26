@@ -12,7 +12,7 @@ except FileExistsError:
 with open("settings.json", "r") as f:
     settings = json.loads(f.read())
 
-version = "1.0-alpha1"
+version = "1.0-alpha2"
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -20,12 +20,25 @@ bot = commands.Bot(intents=intents, command_prefix=settings["prefix"])
 
 @bot.hybrid_command(name="ping")
 async def ping(ctx):
-    await ctx.reply("Pong!")
+    embed = discord.Embed(title="Pong!")
+    embed.add_field(name="Latency:", value=f"{round(bot.latency*1000, 2)}ms", inline=True)
+
+    await ctx.reply(embed=embed)
     return
 
 @bot.hybrid_command(name="version")
-async def ping(ctx):
+async def version(ctx):
     await ctx.reply(version)
+    return
+
+@bot.hybrid_command(name="sync")
+async def sync(ctx):
+    if int(ctx.author.id) != int(settings["ownerid"]):
+        return
+
+    synced = len(await bot.tree.sync())
+    await ctx.send(f"Synced {synced} commands successfully!")
+    print(f"Synced {synced} commands successfully!")
     return
 
 @bot.event
@@ -52,6 +65,5 @@ async def on_ready():
     print(f"Bot is up as {bot.user.name}#{bot.user.discriminator}!")
 
 if __name__ == "__main__":
-    bot.run(settings["token"])
-
+    exit(bot.run(settings["token"]))
 
