@@ -1,5 +1,5 @@
 {
 	"token": "[TOKEN]",
 	"prefix": "[PREFIX]",
-	"ownerid": "[USER ID]"
+	"ownerid": [USER ID]
 }
