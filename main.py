@@ -13,23 +13,23 @@ except FileExistsError:
 with open("settings.json", "r") as f:
     settings = json.loads(f.read())
 
-version = "1.0-alpha3"
+versionnumber = "1.0-alpha4"
 
 intents = discord.Intents.default()
 intents.message_content = True
-bot = commands.Bot(intents=intents, command_prefix=settings["prefix"])
+bot = commands.Bot(intents=intents, command_prefix=settings["prefix"], help_command=None)
 
 @bot.hybrid_command(name="ping")
 async def ping(ctx):
     embed = discord.Embed(title="Pong!")
     embed.add_field(name="Latency:", value=f"{round(bot.latency*1000, 2)}ms", inline=True)
 
-    await ctx.reply(embed=embed)
+    await ctx.send(embed=embed)
     return
 
 @bot.hybrid_command(name="version")
 async def version(ctx):
-    await ctx.reply(version)
+    await ctx.send(versionnumber)
     return
 
 @bot.hybrid_command(name="sync")
@@ -41,6 +41,22 @@ async def sync(ctx):
     await ctx.send(f"Synced {synced} commands successfully!")
     print(f"Synced {synced} commands successfully!")
     return
+
+@bot.hybrid_command(name="mem")
+async def mem(ctx):
+    await ctx.send(file=discord.File("memory.json"))
+    return
+
+@bot.hybrid_command(name="help")
+async def help(ctx):
+    embed = discord.Embed(title="Help")
+    embed.add_field(name="Commands:", value=f"{settings["prefix"]}help\n"
+                                            f"{settings["prefix"]}mem\n"
+                                            f"{settings["prefix"]}ping\n"
+                                            f"{settings["prefix"]}version\n"
+                                            f"{settings["prefix"]}sync (Owner only)\n")
+
+    await ctx.send(embed=embed)
 
 @bot.event
 async def on_message(message):
