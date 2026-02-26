@@ -13,7 +13,7 @@ except FileExistsError:
 with open("settings.json", "r") as f:
     settings = json.loads(f.read())
 
-versionnumber = "1.0-alpha4"
+versionnumber = "1.0-alpha4.1"
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -69,7 +69,7 @@ async def on_message(message):
 
         # yeah this is big brain time
         memory = memory.replace("\n}", "")
-        memory+=f',\n"{message.author.id}": "{message.content}"'
+        memory+=f',\n"{message.author.id}": "{message.content.replace('"', "")}"'
         memory+="\n}"
         with open("memory.json", "w") as f:
             f.write(memory.replace("{,\n", "{\n"))
