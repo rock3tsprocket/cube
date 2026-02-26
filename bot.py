@@ -1,3 +1,4 @@
+from glob import glob
 import json
 import discord
 from discord.ext import commands
@@ -12,7 +13,7 @@ except FileExistsError:
 with open("settings.json", "r") as f:
     settings = json.loads(f.read())
 
-version = "1.0-alpha2"
+version = "1.0-alpha3"
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -62,6 +63,11 @@ async def on_message(message):
 
 @bot.event
 async def on_ready():
+    for cog in glob("cogs/*.py"):
+        cog = cog.replace("/", ".")[0:-3]
+        await bot.load_extension(cog)
+        print(f"Loaded cog {cog[5:]} successfully")
+
     print(f"Bot is up as {bot.user.name}#{bot.user.discriminator}!")
 
 if __name__ == "__main__":
