@@ -1,2 +1,4 @@
 settings.json
 .venv
+memory.json
+.*.sw?
