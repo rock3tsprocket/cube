@@ -13,7 +13,7 @@ except FileExistsError:
 with open("settings.json", "r") as f:
     settings = json.loads(f.read())
 
-versionnumber = "1.0-alpha5"
+versionnumber = "1.0-beta1"
 
 intents = discord.Intents.default()
 intents.message_content = True
