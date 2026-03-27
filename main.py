@@ -3,12 +3,10 @@ import json
 import discord
 from discord.ext import commands
 
-
-
 with open("settings.json", "r") as f:
     settings = json.loads(f.read())
 
-versionnumber = "1.0"
+versionnumber = "1.1"
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -45,11 +43,13 @@ async def mem(ctx):
 @bot.hybrid_command(name="help")
 async def help(ctx):
     embed = discord.Embed(title="Help")
-    embed.add_field(name="Core commands:", value=f"{settings["prefix"]}help\n"
-                                            f"{settings["prefix"]}mem\n"
-                                            f"{settings["prefix"]}ping\n"
-                                            f"{settings["prefix"]}version\n"
-                                            f"{settings["prefix"]}sync (Owner only)\n")
+    embed.add_field(name="Core commands:",
+                    value=f"{settings["prefix"]}help\n"
+                          f"{settings["prefix"]}mem\n"
+                          f"{settings["prefix"]}ping\n"
+                          f"{settings["prefix"]}version\n"
+                          f"{settings["prefix"]}stats\n"
+                          f"{settings["prefix"]}sync (Owner only)\n")
     commands = ""
     for cog in bot.cogs:
         for command in bot.cogs[cog].get_commands():
@@ -57,6 +57,32 @@ async def help(ctx):
         embed.add_field(name=cog, value=commands)
         commands = ""
 
+    await ctx.send(embed=embed)
+
+
+@bot.hybrid_command()
+async def stats(ctx):
+    try:
+        nomemory = False
+        f = open("memory.json", "r")
+        memorylen = len(f.read())
+        f.seek(0)
+        memorylines = len(f.readlines())
+    except OSError:
+        nomemory = True
+    finally:
+        f.close()
+
+    embed = discord.Embed(title="Bot Stats")
+    if not nomemory:
+        embed.add_field(name="File Stats",
+                        value=f"Size: {memorylen} bytes\n"
+                        f"Lines: {memorylines}", inline=False)
+    embed.add_field(name="Version",
+                    value=f"Current version: {versionnumber}", inline=False)
+    embed.add_field(name="Settings",
+                    value=f"Prefix: {settings["prefix"]}\n"
+                    f"Owner ID: {settings["ownerid"]}\n", inline=False)
     await ctx.send(embed=embed)
 
 @bot.event
