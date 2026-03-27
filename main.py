@@ -50,11 +50,17 @@ async def mem(ctx):
 @bot.hybrid_command(name="help")
 async def help(ctx):
     embed = discord.Embed(title="Help")
-    embed.add_field(name="Commands:", value=f"{settings["prefix"]}help\n"
+    embed.add_field(name="Core commands:", value=f"{settings["prefix"]}help\n"
                                             f"{settings["prefix"]}mem\n"
                                             f"{settings["prefix"]}ping\n"
                                             f"{settings["prefix"]}version\n"
                                             f"{settings["prefix"]}sync (Owner only)\n")
+    commands = ""
+    for cog in bot.cogs:
+        for command in bot.cogs[cog].get_commands():
+            commands+=f"{settings["prefix"]}{command}\n"
+
+    embed.add_field(name="Cog commands:", value=commands)
 
     await ctx.send(embed=embed)
 
