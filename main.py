@@ -13,7 +13,7 @@ except FileExistsError:
 with open("settings.json", "r") as f:
     settings = json.loads(f.read())
 
-versionnumber = "1.0-beta1"
+versionnumber = "1.0-beta1.1"
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -59,8 +59,8 @@ async def help(ctx):
     for cog in bot.cogs:
         for command in bot.cogs[cog].get_commands():
             commands+=f"{settings["prefix"]}{command}\n"
-
-    embed.add_field(name="Cog commands:", value=commands)
+        embed.add_field(name=cog, value=commands)
+        commands = ""
 
     await ctx.send(embed=embed)
 
