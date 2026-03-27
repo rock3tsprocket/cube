@@ -1,6 +1,6 @@
 import markovify
 from random import randint
-from json import loads
+from json import loads, dumps
 from discord.ext import commands
 
 class markov(commands.Cog):
@@ -37,16 +37,13 @@ class markov(commands.Cog):
         if message.content.startswith(self.prefix):
             return
 
+        # Reading file
         with open("memory.json", "r") as f:
-            memory = f.read()
+            memory = loads(f.read())
+            memory.append(message.content)
 
-        # yeah this is big brain time
-        memory = memory.replace("\n]", "")
-        memory+=f',\n"{message.content.replace('"', "")}"'
-        memory+="\n]"
         with open("memory.json", "w") as f:
-            f.write(memory.replace("[,\n", "[\n"))
-        return
+            f.write(dumps(memory, sort_keys=True, indent=4))
 
 async def setup(bot):
     try:
