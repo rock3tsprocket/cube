@@ -6,7 +6,7 @@ from discord.ext import commands
 with open("settings.json", "r") as f:
     settings = json.loads(f.read())
 
-versionnumber = "1.1"
+versionnumber = "1.1.1"
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -26,10 +26,8 @@ async def version(ctx):
     return
 
 @bot.hybrid_command(name="sync")
+@commands.is_owner()
 async def sync(ctx):
-    if int(ctx.author.id) != int(settings["ownerid"]):
-        return
-
     synced = len(await bot.tree.sync())
     await ctx.send(f"Synced {synced} commands successfully!")
     print(f"Synced {synced} commands successfully!")
@@ -62,6 +60,8 @@ async def help(ctx):
 
 @bot.hybrid_command()
 async def stats(ctx):
+    owner_id = await bot.application_info()
+    owner_id = owner_id.owner.id
     try:
         nomemory = False
         f = open("memory.json", "r")
@@ -82,7 +82,7 @@ async def stats(ctx):
                     value=f"Current version: {versionnumber}", inline=False)
     embed.add_field(name="Settings",
                     value=f"Prefix: {settings["prefix"]}\n"
-                    f"Owner ID: {settings["ownerid"]}\n", inline=False)
+                    f"Owner ID: {owner_id}\n", inline=False)
     await ctx.send(embed=embed)
 
 @bot.event
@@ -95,6 +95,13 @@ async def on_ready():
         cog = cog.replace("/", ".")[0:-3]
         await bot.load_extension(cog)
         print(f"Loaded cog {cog[5:]} successfully")
+
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, discord.ext.commands.errors.NotOwner):
+        await ctx.send("Error: You are not allowed to run this command.")
+    else:
+        raise error
 
     print(f"Bot is up as {bot.user.name}#{bot.user.discriminator}!")
 

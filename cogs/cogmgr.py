@@ -8,11 +8,9 @@ class cogmgr(commands.Cog):
         self.ownerid = json.loads(f.read())["ownerid"]
         f.close()
 
+    @commands.is_owner()
     @commands.hybrid_command()
     async def load(self, ctx, arg1 = None):
-        if int(ctx.author.id) != int(self.ownerid):
-            return
-
         if not arg1:
             await ctx.send("No cog specified!")
             return
@@ -22,11 +20,9 @@ class cogmgr(commands.Cog):
         except Exception as e:
             await ctx.send(f"Failed to load cog `{arg1}`: {e}")
 
+    @commands.is_owner()
     @commands.hybrid_command()
     async def unload(self, ctx, arg1 = None):
-        if int(ctx.author.id) != int(self.ownerid):
-            return
-
         if not arg1:
             await ctx.send("No cog specified.")
             return
@@ -36,11 +32,9 @@ class cogmgr(commands.Cog):
         except Exception as e:
             await ctx.send(f"Failed to unload cog `{arg1}`: {e}")
 
+    @commands.is_owner()
     @commands.hybrid_command()
     async def reload(self, ctx, arg1 = None):
-        if int(ctx.author.id) != int(self.ownerid):
-            return
-
         if not arg1:
             await ctx.send("No cog specified.")
             return
