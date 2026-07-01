@@ -4,9 +4,6 @@ from discord.ext import commands
 class cogmgr(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        f = open("settings.json", "r")
-        self.ownerid = json.loads(f.read())["ownerid"]
-        f.close()
 
     @commands.is_owner()
     @commands.hybrid_command()

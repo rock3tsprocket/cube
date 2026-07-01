@@ -6,7 +6,7 @@ from discord.ext import commands
 with open("settings.json", "r") as f:
     settings = json.loads(f.read())
 
-versionnumber = "1.1.2"
+versionnumber = "1.1.3"
 
 intents = discord.Intents.default()
 intents.message_content = True
