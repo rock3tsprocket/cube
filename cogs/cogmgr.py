@@ -18,7 +18,7 @@ class cogmgr(commands.Cog):
             await self.bot.load_extension(f"cogs.{arg1}")
             await ctx.send(f"Loaded cog `{arg1}` successfully")
         except Exception as e:
-            await ctx.send(f"Failed to load cog `{arg1}`: {e}")
+            await ctx.send(f"Failed to load cog `{arg1}`: ```{e}```")
 
     @commands.is_owner()
     @commands.hybrid_command()
@@ -30,7 +30,7 @@ class cogmgr(commands.Cog):
             await self.bot.unload_extension(f"cogs.{arg1}")
             await ctx.send(f"Unloaded cog `{arg1}` successfully")
         except Exception as e:
-            await ctx.send(f"Failed to unload cog `{arg1}`: {e}")
+            await ctx.send(f"Failed to unload cog `{arg1}`: ```{e}```")
 
     @commands.is_owner()
     @commands.hybrid_command()
@@ -42,7 +42,7 @@ class cogmgr(commands.Cog):
             await self.bot.reload_extension(f"cogs.{arg1}")
             await ctx.send(f"Reloaded cog `{arg1}` successfully")
         except Exception as e:
-            await ctx.send(f"Failed to reload cog `{arg1}`: {e}")
+            await ctx.send(f"Failed to reload cog `{arg1}`: ```{e}```")
 
 async def setup(bot):
     await bot.add_cog(cogmgr(bot))
